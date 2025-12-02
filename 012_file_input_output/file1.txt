@@ -1,0 +1,10 @@
+Another possibility (popularized in Effective STL by Scott Meyers) is:
+
+std::ifstream f("file.txt");
+if (f) {
+	std::string str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+	// Operations on `str`...
+}
+This is nice because requires little code (and allows reading a file directly into any STL container, not only strings) but can be slow for big files.
+
+NOTE: the extra parentheses around the first argument to the string constructor are essential to prevent the most vexing parse problem.
