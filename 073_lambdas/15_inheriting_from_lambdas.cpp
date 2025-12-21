@@ -5,15 +5,15 @@
 #include <type_traits>
 
 template<typename L1, typename L2>
-struct S : L1, L2 {
-    S(L1 l1, L2 l2) : L1{std::move(l1)}, L2{std::move(l2)} {}
+struct Merged : L1, L2 {
+    Merged(L1 l1, L2 l2) : L1{std::move(l1)}, L2{std::move(l2)} {}
     using L1::operator();
     using L2::operator();
 };
 
 template<typename L1, typename L2>
 auto make_combined (L1 &&l1 , L2 &&l2) {
-    return S<std::decay_t<L1>, std::decay_t<L2>>(std::forward<L1>(l1), std::forward<L2>(l2));    
+    return Merged<std::decay_t<L1>, std::decay_t<L2>>(std::forward<L1>(l1), std::forward<L2>(l2));    
 }
 
 int main() {
@@ -21,7 +21,13 @@ int main() {
     auto l2= [](const int i){return i*10;};
 
     auto comb =make_combined(l1, l2);
+    
+    //or
+    Merged merged (l1, l2);//OK for CTAD C++17
 
     std::cout<< comb() <<'\n';
     std::cout<< comb(10500) <<'\n';
+
+    std::cout<< merged() <<'\n';
+    std::cout<< merged(10500) <<'\n';
 }

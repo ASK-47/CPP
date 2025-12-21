@@ -30,7 +30,7 @@ int main() {
                 return *this;
             }
 
-            operator int() {
+            operator int() {//need to convert Result => int (in main return of fot std::cout)
                 return a;
             }
         };
