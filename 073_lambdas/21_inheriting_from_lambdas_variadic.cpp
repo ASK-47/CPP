@@ -15,7 +15,14 @@ struct Merged : B... {
 
 template<typename...T>  //to fix Merged<L> + <T> inside
 Merged(T...)->Merged<std::decay_t<T>...>;
+//User-defined deduction guides
+//https://en.cppreference.com/w/cpp/language/class_template_argument_deduction.html
 
+//template<typename... T>: This declares a variadic template guide that can accept any number of template parameters.
+//Merged(T...) -> Merged<std::decay_t<T>...>: This specifies that when you construct a Merged object with arguments of types T... (e.g., Merged(obj1, obj2)),
+//the compiler should deduce the template parameter as Merged<std::decay_t<decltype(obj1)>, std::decay_t<decltype(obj2)>, ...>.
+//std::decay_t<T> removes references, const/volatile qualifiers, and arrays from T, effectively "decaying" it to a prvalue type (similar to pass-by-value semantics)
+//This is useful for storing types without worrying about referenceness.
 
 int main() {
     auto l1= [](){return 42;};

@@ -7,18 +7,18 @@
 struct Lifetime {
     Lifetime() noexcept {  std::cout <<"Lifetime() [default constructor]\n"; }
     
-    ~Lifetime() noexcept { std::cout <<"~Lifetime() [destructor]\n"; }
+    ~Lifetime() noexcept { std::cout <<"~Lifetime() [destructor] of " << key << '\n';}
     
     Lifetime(const std::string& s)  noexcept  : key(s) {
-        std::cout <<"Lifetime(const std::string &) [parametric constructor]\n";
+        std::cout <<"Lifetime(const std::string &) [parametric constructor] with " << s << '\n';
     }    
     
-    Lifetime(const Lifetime&) noexcept {
-        std::cout <<"Lifetime(const Lifetime &) [copy constructor]\n";
+    Lifetime(const Lifetime& l) noexcept {
+        std::cout <<"Lifetime(const Lifetime &) [copy constructor] of " << l.key << '\n';
     }
 
-    Lifetime(Lifetime&&) noexcept {
-        std::cout <<"Lifetime(Lifetime &&) [move constructor]\n";
+    Lifetime(Lifetime&& l) noexcept {
+        std::cout <<"Lifetime(Lifetime &&) [move constructor] of " << l.key << '\n';
     }
 
     Lifetime& operator=(const Lifetime& other) noexcept {
@@ -60,17 +60,17 @@ int main() {
     //set_explicit_l.insert(Lifetime{"Nick"});    
 
     //3 explicite lambla + allocator (third template parameter in set<>)== OK    
-    //auto la = [](const Lifetime& lhs, const Lifetime& rhs){return lhs.key < rhs.key;};
-    //std::set<Lifetime, decltype (la)> set_explicit_l_alloc {la};
+    auto la = [](const Lifetime& lhs, const Lifetime& rhs){return lhs.key < rhs.key;};
+    std::set<Lifetime, decltype (la)> set_explicit_l_alloc {la};
     //template<class Key, class Compare = std::less<Key>, class Allocator = std::allocator<Key>> class set;
     //decltype (la)== class Allocator 
-    //set_explicit_l_alloc.insert(Lifetime{"Cave"});
+    set_explicit_l_alloc.insert(Lifetime{"Cave"});
 
     //4 using type deduction
     //auto lambda = [](const Lifetime& lhs, const Lifetime& rhs){return lhs.key < rhs.key;};
     //std::set myset{{Lifetime{"Cave"}}, lambda};//excess code
     
     //4.1 or directly in set
-    std::set myset{{Lifetime{"Cave"}}, [](const Lifetime& lhs, const Lifetime& rhs){return lhs.key < rhs.key;}};//excess code
-    myset.insert(Lifetime{"Freddy"});
+    //std::set myset{{Lifetime{"Cave"}}, [](const Lifetime& lhs, const Lifetime& rhs){return lhs.key < rhs.key;}};//excess code
+    //myset.insert(Lifetime{"Freddy"});
 }
